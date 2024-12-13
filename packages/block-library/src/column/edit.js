@@ -18,8 +18,9 @@ import {
 } from '@wordpress/block-editor';
 import {
 	__experimentalUseCustomUnits as useCustomUnits,
-	PanelBody,
 	__experimentalUnitControl as UnitControl,
+	__experimentalToolsPanel as ToolsPanel,
+	__experimentalToolsPanelItem as ToolsPanelItem,
 } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
@@ -30,19 +31,32 @@ function ColumnInspectorControls( { width, setAttributes } ) {
 		availableUnits: availableUnits || [ '%', 'px', 'em', 'rem', 'vw' ],
 	} );
 	return (
-		<PanelBody title={ __( 'Settings' ) }>
-			<UnitControl
+		<ToolsPanel
+			label={ __( 'Settings' ) }
+			resetAll={ () => {
+				setAttributes( { width: undefined } );
+			} }
+		>
+			<ToolsPanelItem
+				hasValue={ () => width !== undefined }
 				label={ __( 'Width' ) }
-				__unstableInputWidth="calc(50% - 8px)"
-				__next40pxDefaultSize
-				value={ width || '' }
-				onChange={ ( nextWidth ) => {
-					nextWidth = 0 > parseFloat( nextWidth ) ? '0' : nextWidth;
-					setAttributes( { width: nextWidth } );
-				} }
-				units={ units }
-			/>
-		</PanelBody>
+				onDeselect={ () => setAttributes( { width: undefined } ) }
+				isShownByDefault
+			>
+				<UnitControl
+					label={ __( 'Width' ) }
+					__unstableInputWidth="calc(50% - 8px)"
+					__next40pxDefaultSize
+					value={ width || '' }
+					onChange={ ( nextWidth ) => {
+						nextWidth =
+							0 > parseFloat( nextWidth ) ? '0' : nextWidth;
+						setAttributes( { width: nextWidth } );
+					} }
+					units={ units }
+				/>
+			</ToolsPanelItem>
+		</ToolsPanel>
 	);
 }
 
