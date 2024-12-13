@@ -9,9 +9,10 @@ import clsx from 'clsx';
 import { __ } from '@wordpress/i18n';
 import {
 	Notice,
-	PanelBody,
 	RangeControl,
 	ToggleControl,
+	__experimentalToolsPanel as ToolsPanel,
+	__experimentalToolsPanelItem as ToolsPanelItem,
 } from '@wordpress/components';
 
 import {
@@ -149,9 +150,22 @@ function ColumnInspectorControls( {
 	}
 
 	return (
-		<PanelBody title={ __( 'Settings' ) }>
+		<ToolsPanel
+			label={ __( 'Settings' ) }
+			resetAll={ () => {
+				updateColumns( count, minCount );
+				setAttributes( {
+					isStackedOnMobile: true,
+				} );
+			} }
+		>
 			{ canInsertColumnBlock && (
-				<>
+				<ToolsPanelItem
+					label={ __( 'Columns' ) }
+					isShownByDefault
+					hasValue={ () => count }
+					onDeselect={ () => updateColumns( count, minCount ) }
+				>
 					<RangeControl
 						__nextHasNoMarginBottom
 						__next40pxDefaultSize
@@ -170,19 +184,30 @@ function ColumnInspectorControls( {
 							) }
 						</Notice>
 					) }
-				</>
+				</ToolsPanelItem>
 			) }
-			<ToggleControl
-				__nextHasNoMarginBottom
+			<ToolsPanelItem
 				label={ __( 'Stack on mobile' ) }
-				checked={ isStackedOnMobile }
-				onChange={ () =>
+				isShownByDefault
+				hasValue={ () => isStackedOnMobile !== true }
+				onDeselect={ () =>
 					setAttributes( {
-						isStackedOnMobile: ! isStackedOnMobile,
+						isStackedOnMobile: true,
 					} )
 				}
-			/>
-		</PanelBody>
+			>
+				<ToggleControl
+					__nextHasNoMarginBottom
+					label={ __( 'Stack on mobile' ) }
+					checked={ isStackedOnMobile }
+					onChange={ () =>
+						setAttributes( {
+							isStackedOnMobile: ! isStackedOnMobile,
+						} )
+					}
+				/>
+			</ToolsPanelItem>
+		</ToolsPanel>
 	);
 }
 
