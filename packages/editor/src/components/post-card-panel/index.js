@@ -6,6 +6,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
+	Badge,
 } from '@wordpress/components';
 import { store as coreStore } from '@wordpress/core-data';
 import { useSelect } from '@wordpress/data';
@@ -111,9 +112,7 @@ export default function PostCardPanel( {
 				>
 					{ title }
 					{ pageTypeBadge && postIds.length === 1 && (
-						<span className="editor-post-card-panel__title-badge">
-							{ pageTypeBadge }
-						</span>
+						<Badge>{ pageTypeBadge }</Badge>
 					) }
 				</Text>
 				<PostActions
