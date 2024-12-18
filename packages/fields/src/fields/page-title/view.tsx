@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
 import type { Settings } from '@wordpress/core-data';
-
+import { Badge } from '@wordpress/components';
 /**
  * Internal dependencies
  */
@@ -27,11 +27,11 @@ export default function PageTitleView( { item }: { item: CommonPost } ) {
 	return (
 		<BaseTitleView item={ item } className="fields-field__page-title">
 			{ [ frontPageId, postsPageId ].includes( item.id as number ) && (
-				<span className="fields-field__page-title__badge">
+				<Badge>
 					{ item.id === frontPageId
 						? __( 'Homepage' )
 						: __( 'Posts Page' ) }
-				</span>
+				</Badge>
 			) }
 		</BaseTitleView>
 	);
