@@ -7,6 +7,7 @@ import clsx from 'clsx';
  * WordPress dependencies
  */
 import {
+	Badge,
 	__experimentalHStack as HStack,
 	__experimentalTruncate as Truncate,
 } from '@wordpress/components';
@@ -116,14 +117,7 @@ function ListViewBlockSelectButton(
 					<Truncate ellipsizeMode="auto">{ blockTitle }</Truncate>
 				</span>
 				{ blockInformation?.anchor && (
-					<span className="block-editor-list-view-block-select-button__anchor-wrapper">
-						<Truncate
-							className="block-editor-list-view-block-select-button__anchor"
-							ellipsizeMode="auto"
-						>
-							{ blockInformation.anchor }
-						</Truncate>
-					</span>
+					<Badge>{ blockInformation.anchor }</Badge>
 				) }
 				{ isSticky && (
 					<span className="block-editor-list-view-block-select-button__sticky">
