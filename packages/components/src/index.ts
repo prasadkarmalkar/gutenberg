@@ -27,6 +27,7 @@ export {
 	default as Autocomplete,
 	useAutocompleteProps as __unstableUseAutocompleteProps,
 } from './autocomplete';
+export { default as Badge } from './badge';
 export { default as BaseControl, useBaseControlProps } from './base-control';
 export {
 	/** @deprecated Import `BorderBoxControl` instead. */
