@@ -188,7 +188,6 @@ export function TimePicker( {
 			max={ 9999 }
 			required
 			spinControls="none"
-			isPressEnterToChange
 			isDragEnabled={ false }
 			isShiftStepEnabled={ false }
 			onChange={ buildNumberControlChangeCallback( 'year' ) }
