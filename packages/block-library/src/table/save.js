@@ -69,9 +69,6 @@ export default function save( { attributes } ) {
 												: undefined
 										}
 										data-align={ align }
-										data-align-all-columns={
-											attributes.alignAllColumns
-										}
 										tagName={ tag }
 										value={ content }
 										key={ cellIndex }
@@ -95,6 +92,7 @@ export default function save( { attributes } ) {
 			<table
 				className={ classes === '' ? undefined : classes }
 				style={ { ...colorProps.style, ...borderProps.style } }
+				data-align-all-columns={ attributes.alignAllColumns }
 			>
 				<Section type="head" rows={ head } />
 				<Section type="body" rows={ body } />

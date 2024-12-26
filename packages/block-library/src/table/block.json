@@ -19,6 +19,7 @@
 		"alignAllColumns": {
 			"type": "string",
 			"source": "attribute",
+			"selector": "table",
 			"attribute": "data-align-all-columns"
 		},
 		"head": {
