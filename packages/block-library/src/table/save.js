@@ -55,6 +55,9 @@ export default function save( { attributes } ) {
 								cellIndex
 							) => {
 								const cellClasses = clsx( {
+									[ `has-text-align-${ attributes.alignAllColumns }` ]:
+										attributes.alignAllColumns &&
+										align === undefined,
 									[ `has-text-align-${ align }` ]: align,
 								} );
 
@@ -66,6 +69,9 @@ export default function save( { attributes } ) {
 												: undefined
 										}
 										data-align={ align }
+										data-align-all-columns={
+											attributes.alignAllColumns
+										}
 										tagName={ tag }
 										value={ content }
 										key={ cellIndex }

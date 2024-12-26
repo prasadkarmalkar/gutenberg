@@ -16,6 +16,11 @@
 			"source": "rich-text",
 			"selector": "figcaption"
 		},
+		"alignAllColumns": {
+			"type": "string",
+			"source": "attribute",
+			"attribute": "data-align-all-columns"
+		},
 		"head": {
 			"type": "array",
 			"default": [],
