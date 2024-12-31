@@ -62,6 +62,9 @@
 		},
 		"interactivity": {
 			"clientNavigation": true
+		},
+		"spacing": {
+			"margin": true
 		}
 	},
 	"editorStyle": "wp-block-query-pagination-editor",
