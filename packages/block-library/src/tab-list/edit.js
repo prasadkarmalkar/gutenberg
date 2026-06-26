@@ -15,8 +15,10 @@ import {
 	__experimentalUseColorProps as useColorProps,
 	__experimentalGetSpacingClassesAndStyles as getSpacingClassesAndStyles,
 } from '@wordpress/block-editor';
+import { createBlock } from '@wordpress/blocks';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
+import { ENTER } from '@wordpress/keycodes';
 
 /**
  * Internal dependencies
@@ -38,9 +40,15 @@ function Edit( {
 	const borderProps = useBorderProps( attributes );
 	const spacingProps = getSpacingClassesAndStyles( attributes );
 
-	const { tabsClientId, editorActiveTabIndex, activeTabIndex } = useSelect(
+	const {
+		tabsClientId,
+		editorActiveTabIndex,
+		activeTabIndex,
+		tabPanelsClientId,
+		tabCount,
+	} = useSelect(
 		( select ) => {
-			const { getBlockRootClientId, getBlockAttributes } =
+			const { getBlockRootClientId, getBlockAttributes, getBlocks } =
 				select( blockEditorStore );
 
 			const _tabsClientId = getBlockRootClientId( clientId );
@@ -48,10 +56,17 @@ function Edit( {
 				? getBlockAttributes( _tabsClientId )
 				: {};
 
+			const innerBlocks = _tabsClientId ? getBlocks( _tabsClientId ) : [];
+			const tabPanels = innerBlocks.find(
+				( b ) => b.name === 'core/tab-panels'
+			);
+
 			return {
 				tabsClientId: _tabsClientId,
 				editorActiveTabIndex: tabsAttributes?.editorActiveTabIndex,
 				activeTabIndex: tabsAttributes?.activeTabIndex ?? 0,
+				tabPanelsClientId: tabPanels?.clientId || null,
+				tabCount: tabPanels?.innerBlocks?.length || 0,
 			};
 		},
 		[ clientId ]
@@ -59,8 +74,11 @@ function Edit( {
 
 	const effectiveActiveIndex = editorActiveTabIndex ?? activeTabIndex;
 
-	const { __unstableMarkNextChangeAsNotPersistent, updateBlockAttributes } =
-		useDispatch( blockEditorStore );
+	const {
+		__unstableMarkNextChangeAsNotPersistent,
+		updateBlockAttributes,
+		insertBlock,
+	} = useDispatch( blockEditorStore );
 
 	const handleTabClick = useCallback(
 		( tabIndex ) => {
@@ -88,6 +106,32 @@ function Edit( {
 		},
 		[ tabsList, updateBlockAttributes ]
 	);
+
+	const addTab = useCallback( () => {
+		if ( ! tabPanelsClientId ) {
+			return;
+		}
+		const newTabPanelBlock = createBlock( 'core/tab-panel', {
+			label: __( 'Tab' ),
+		} );
+		insertBlock( newTabPanelBlock, undefined, tabPanelsClientId, false );
+		__unstableMarkNextChangeAsNotPersistent();
+		updateBlockAttributes( tabsClientId, {
+			editorActiveTabIndex: tabCount,
+		} );
+	}, [
+		tabPanelsClientId,
+		tabCount,
+		tabsClientId,
+		insertBlock,
+		updateBlockAttributes,
+		__unstableMarkNextChangeAsNotPersistent,
+	] );
+
+	const addTabRef = useRef( addTab );
+	useEffect( () => {
+		addTabRef.current = addTab;
+	}, [ addTab ] );
 
 	const menuRef = useRef();
 	const prevTabCountRef = useRef( tabsList.length );
@@ -119,6 +163,23 @@ function Edit( {
 
 		focusButtonAt( effectiveActiveIndex );
 	}, [ tabsList.length, effectiveActiveIndex ] );
+
+	useEffect( () => {
+		const el = menuRef.current;
+		if ( ! el ) {
+			return;
+		}
+		const onKeyDown = ( event ) => {
+			if ( event.keyCode !== ENTER || event.defaultPrevented ) {
+				return;
+			}
+			event.preventDefault();
+			addTabRef.current();
+		};
+		// Capture phase so we intercept before RichText's own keydown handler.
+		el.addEventListener( 'keydown', onKeyDown, true );
+		return () => el.removeEventListener( 'keydown', onKeyDown, true );
+	}, [] );
 
 	const blockProps = useBlockProps( {
 		role: 'tablist',
